@@ -1,18 +1,20 @@
 import Head from 'next/head';
+import GNB from './GNB';
+import { Box, BoxProps } from '@chakra-ui/react';
 
 interface Props {
   title?: string;
   children: React.ReactNode;
 }
 
-export const ServiceLayout = function ({ title = 'blah-blah', children }: Props) {
+export const ServiceLayout: React.FC<Props & BoxProps> = function ({ title = 'blah x2', children, ...boxProps }) {
   return (
-    <div>
+    <Box {...boxProps}>
       <Head>
         <title>{title}</title>
-        <link rel="icon" href="/static/favicon.ico" />
       </Head>
+      <GNB />
       {children}
-    </div>
+    </Box>
   );
 };

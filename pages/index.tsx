@@ -8,9 +8,9 @@ const IndexPage: NextPage = function () {
   const { signInWithGoogle } = useAuth();
 
   return (
-    <ServiceLayout title="test">
-      <Box maxW="md" mx="auto">
-        <img src="/logo.svg" alt="메인로고" />
+    <ServiceLayout title="test" minH="100vh" backgroundColor="gray.50">
+      <Box maxW="md" mx="auto" pt="10">
+        <img src="/main_logo.svg" alt="메인로고" />
         <Flex justify="center">
           <Heading>#Blah-Blah</Heading>
         </Flex>
