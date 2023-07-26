@@ -1,33 +1,22 @@
 import { GoogleLoginButton } from '@/components/google_login_btn';
 import { ServiceLayout } from '@/components/service_layout';
-import FirebaseAuthClient from '@/models/firebase_client';
+import { useAuth } from '@/contexts/auth_user.context';
 import { Box, Flex, Heading, Center } from '@chakra-ui/react';
-import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 import { NextPage } from 'next';
 
-const provider = new GoogleAuthProvider();
-
 const IndexPage: NextPage = function () {
+  const { signInWithGoogle } = useAuth();
+
   return (
-    <ServiceLayout title="test">
-      <Box maxW="md" mx="auto">
-        <img src="/logo.svg" alt="메인로고" />
+    <ServiceLayout title="test" minH="100vh" backgroundColor="gray.50">
+      <Box maxW="md" mx="auto" pt="10">
+        <img src="/main_logo.svg" alt="메인로고" />
         <Flex justify="center">
           <Heading>#Blah-Blah</Heading>
         </Flex>
       </Box>
       <Center mt="20">
-        <GoogleLoginButton
-          onclick={() => {
-            signInWithPopup(FirebaseAuthClient.getInstance().Auth, provider)
-              .then((result) => {
-                console.info(result.user);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          }}
-        />
+        <GoogleLoginButton onclick={signInWithGoogle} />
       </Center>
     </ServiceLayout>
   );
