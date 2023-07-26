@@ -13,6 +13,7 @@ export default class FirebaseAdmin {
   public static instance: FirebaseAdmin;
 
   private init = false;
+  Firebase: any;
 
   public static getInstance(): FirebaseAdmin {
     if (!FirebaseAdmin.instance) {
