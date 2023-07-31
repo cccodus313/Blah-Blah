@@ -1,7 +1,7 @@
 import convertDateToString from '@/utils/convert_date_to_string';
 import ResizeTextarea from 'react-textarea-autosize';
 import { Avatar, Box, Divider, Flex, Text, Textarea, Button } from '@chakra-ui/react';
-import { InMessage } from '../models/message/in_messsage';
+import { InMessage } from '../models/message/in_message';
 import { displayName } from 'next/dist/shared/lib/utils';
 
 interface Props {

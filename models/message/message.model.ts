@@ -1,7 +1,7 @@
 import CustomServerError from '@/controllers/error/custom_server_error';
 import { firestore } from 'firebase-admin';
-import { deflate } from 'zlib';
 import FirebaseAdmin from '../firebase_admin';
+import { InMessage, InMessageServer } from './in_message';
 
 const MEMBER_COLLECTION = 'members';
 const MESSAGE_COLLECTION = 'messages';
@@ -22,9 +22,8 @@ async function post({
   };
 }) {
   const memberRef = FirebaseAdmin.getInstance().Firestore.collection(MEMBER_COLLECTION).doc(uid);
-  await Firestore.runTransaction(async (transaction) => {
+  const listData = await Firestore.runTransaction(async (transaction) => {
     const memberDoc = await transaction.get(memberRef);
-    // 존재하지 않는 사용자
     if (memberDoc.exists === false) {
       throw new CustomServerError({ statusCode: 400, message: '존재하지 않는 사용자' });
     }
@@ -47,8 +46,32 @@ async function post({
   });
 }
 
+async function list({ uid }: { uid: string }) {
+  const memberRef = FirebaseAdmin.getInstance().Firestore.collection(MEMBER_COLLECTION).doc(uid);
+  const listData = await Firestore.runTransaction(async (transaction) => {
+    const memberDoc = await transaction.get(memberRef);
+    if (memberDoc.exists === false) {
+      throw new CustomServerError({ statusCode: 400, message: '존재하지 않는 사용자' });
+    }
+    const messageCol = memberRef.collection(MESSAGE_COLLECTION);
+    const messageColDoc = await transaction.get(messageCol);
+    const data = messageColDoc.docs.map((mv) => {
+      const docData = mv.data() as Omit<InMessageServer, 'id'>;
+      const returnData = {
+        ...docData,
+        id: mv.id,
+        crateAt: docData.createAt.toDate().toISOString(),
+        replyAt: docData.replyAt ? docData.replyAt.toDate().toISOString() : undefined,
+      } as unknown as InMessage;
+      return returnData;
+    });
+    return data;
+  });
+  return listData;
+}
 const MessageModel = {
   post,
+  list,
 };
 
 export default MessageModel;

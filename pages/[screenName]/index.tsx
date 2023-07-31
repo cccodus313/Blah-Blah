@@ -15,10 +15,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { GetServerSideProps, NextPage } from 'next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ResizeTextarea from 'react-textarea-autosize';
 import axios, { AxiosResponse } from 'axios';
 import MessageItem from '@/components/message_item';
+import { InMessage } from '@/models/message/in_message';
+import { userInfo } from 'os';
 
 interface Props {
   userInfo: InAuthUser | null;
@@ -69,20 +71,37 @@ async function postMessage({
 const UserHomePage: NextPage<Props> = function () {
   const [message, setMessage] = useState('');
   const [isAnonymous, setAnonymous] = useState(true);
+  const [messageList, setMessageList] = useState<InMessage[]>([]);
   const toast = useToast();
   const { authUser } = useAuth();
-  if (authUser === null) {
+  async function fetchMessageList(uid: string) {
+    try {
+      const resp = await fetch(`/api/message.list?uid=${uid}`);
+      if (resp.status === 200) {
+        const data = await resp.json();
+        setMessageList(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  useEffect(() => {
+    if (userInfo === null) return;
+    fetchMessageList(userInfo.uid);
+  }, [userInfo]);
+  if (userInfo === null) {
     return <p>사용자를 찾을 수 없습니다.</p>;
   }
+  const isOwner = authUser !== null && authUser.uid === userInfo.uid;
   return (
-    <ServiceLayout title={`${authUser.displayName}의 홈`} minH="100vh" backgroundColor="gray.50">
+    <ServiceLayout title={`${userInfo.displayName}의 홈`} minH="100vh" backgroundColor="gray.50">
       <Box maxW="md" mx="auto" pt="6">
         <Box borderWidth="1px" borderRadius="lg" overflow="hidden" mb="2" bg="white">
           <Flex p="6">
-            <Avatar size="lg" src={authUser.photoURL ?? 'https://bit.ly/broken-link'} mr="2" />
+            <Avatar size="lg" src={userInfo.photoURL ?? 'https://bit.ly/broken-link'} mr="2" />
             <Flex direction="column" justify="center">
-              <Text fontSize="md">{authUser.displayName}</Text>
-              <Text fontSize="xs">{authUser.email}</Text>
+              <Text fontSize="md">{userInfo.displayName}</Text>
+              <Text fontSize="xs">{userInfo.email}</Text>
             </Flex>
           </Flex>
         </Box>
@@ -97,7 +116,7 @@ const UserHomePage: NextPage<Props> = function () {
               bg="gray.100"
               border="none"
               boxShadow="none !important"
-              placeholder="어떤 이야기를 나누고 싶나요?"
+              placeholder="어떤이야기를 하고 싶나요?"
               borderRadius="md"
               resize="none"
               minH="unset"
@@ -139,7 +158,7 @@ const UserHomePage: NextPage<Props> = function () {
                   };
                 } = {
                   message,
-                  uid: authUser.uid,
+                  uid: userInfo.uid,
                 };
                 if (isAnonymous === false) {
                   postData.author = {
@@ -181,30 +200,16 @@ const UserHomePage: NextPage<Props> = function () {
           </FormControl>
         </Box>
         <VStack spacing="12px" mt="6">
-          <MessageItem
-            uid="hello"
-            displayName="test"
-            isOwner={false}
-            item={{
-              id: 'test',
-              message: 'test',
-              createAt: '2023-07-30T16:00+09:00',
-              reply: 'reply',
-              replyAt: '2023-07-31T15:00+09:00',
-            }}
-            photoURL={authUser?.photoURL ?? ''}
-          />
-          <MessageItem
-            uid="hello"
-            displayName="test"
-            isOwner={true}
-            item={{
-              id: 'test',
-              message: 'test',
-              createAt: '2023-07-30T16:00+09:00',
-            }}
-            photoURL={authUser?.photoURL ?? ''}
-          />
+          {messageList.map((messageData) => (
+            <MessageItem
+              key={`message-item${userInfo.uid}-${messageData.id}`}
+              item={messageData}
+              uid={userInfo.uid}
+              displayName={userInfo.displayName ?? ''}
+              photoURL={userInfo.photoURL ?? 'https://bit.ly/broken-link'}
+              isOwner={isOwner}
+            />
+          ))}
         </VStack>
       </Box>
     </ServiceLayout>
