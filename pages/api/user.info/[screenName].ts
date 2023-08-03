@@ -6,7 +6,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
   const supportMethod = ['GET'];
-  console.log('test');
   try {
     checkSupportMethod(supportMethod, method);
     await MemberCtrl.findByScreenName(req, res);

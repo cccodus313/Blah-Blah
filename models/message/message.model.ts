@@ -26,7 +26,7 @@ async function post({
     if (memberDoc.exists === false) {
       throw new CustomServerError({ statusCode: 400, message: '존재하지 않는 사용자' });
     }
-    const newMessageRef = memberRef.collection(MEMBER_COL).doc();
+    const newMessageRef = memberRef.collection(MSG_COL).doc();
     const newMessageBody: {
       message: string;
       createAt: firestore.FieldValue;
@@ -52,7 +52,7 @@ async function list({ uid }: { uid: string }) {
     if (memberDoc.exists === false) {
       throw new CustomServerError({ statusCode: 400, message: '존재하지않는 사용자' });
     }
-    const messageCol = memberRef.collection(MSG_COL).orderBy('createAt', 'desc');
+    const messageCol = memberRef.collection(MSG_COL);
     const messageColDoc = await transaction.get(messageCol);
     const data = messageColDoc.docs.map((mv) => {
       const docData = mv.data() as Omit<InMessageServer, 'id'>;

@@ -24,6 +24,7 @@ async function list(req: NextApiRequest, res: NextApiResponse) {
   const listResp = await MessageModel.list({ uid: uidToStr });
   return res.status(200).json(listResp);
 }
+
 async function postReply(req: NextApiRequest, res: NextApiResponse) {
   const { uid, messageId, reply } = req.body;
 

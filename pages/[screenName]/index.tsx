@@ -8,7 +8,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  list,
   Switch,
   Text,
   Textarea,
@@ -79,7 +78,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
 
   async function fetchMessageList(uid: string) {
     try {
-      const resp = await fetch(`/api/messages.list?uid=${uid}`);
+      const resp = await fetch(`/api/messages.list?uid${uid}`);
       if (resp.status === 200) {
         const data = await resp.json();
         setMessageList(data);
