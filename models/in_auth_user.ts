@@ -3,5 +3,4 @@ export interface InAuthUser {
   email: string | null;
   photoURL: string | null;
   displayName: string | null;
-  screenName: string | null;
 }

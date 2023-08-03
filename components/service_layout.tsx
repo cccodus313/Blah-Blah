@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import GNB from './GNB';
+import GNB from './gnb';
 import { Box, BoxProps } from '@chakra-ui/react';
 
 interface Props {

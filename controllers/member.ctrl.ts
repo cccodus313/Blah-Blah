@@ -1,6 +1,6 @@
 import MemberModel from '@/models/member/member.model';
 import { NextApiRequest, NextApiResponse } from 'next';
-import BadReqError from './error/bad_requst_error';
+import BadReqError from './error/badrequest_error';
 
 async function add(req: NextApiRequest, res: NextApiResponse) {
   const { uid, email, displayName, photoURL } = req.body;

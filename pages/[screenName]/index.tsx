@@ -8,6 +8,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  list,
   Switch,
   Text,
   Textarea,
@@ -20,7 +21,6 @@ import ResizeTextarea from 'react-textarea-autosize';
 import axios, { AxiosResponse } from 'axios';
 import MessageItem from '@/components/message_item';
 import { InMessage } from '@/models/message/in_message';
-import { userInfo } from 'os';
 
 interface Props {
   userInfo: InAuthUser | null;
@@ -45,7 +45,7 @@ async function postMessage({
     };
   }
   try {
-    await fetch(`/api/message.add`, {
+    await fetch('/api/messages.add', {
       method: 'post',
       headers: {
         'content-type': 'application/json',
@@ -68,15 +68,18 @@ async function postMessage({
   }
 }
 
-const UserHomePage: NextPage<Props> = function () {
+const UserHomePage: NextPage<Props> = function ({ userInfo }) {
   const [message, setMessage] = useState('');
   const [isAnonymous, setAnonymous] = useState(true);
   const [messageList, setMessageList] = useState<InMessage[]>([]);
+  const [messageListFetchTrigger, setMessageListFetchTrigger] = useState(false);
+
   const toast = useToast();
   const { authUser } = useAuth();
+
   async function fetchMessageList(uid: string) {
     try {
-      const resp = await fetch(`/api/message.list?uid=${uid}`);
+      const resp = await fetch(`/api/messages.list?uid=${uid}`);
       if (resp.status === 200) {
         const data = await resp.json();
         setMessageList(data);
@@ -88,11 +91,12 @@ const UserHomePage: NextPage<Props> = function () {
   useEffect(() => {
     if (userInfo === null) return;
     fetchMessageList(userInfo.uid);
-  }, [userInfo]);
+  }, [userInfo, messageListFetchTrigger]);
   if (userInfo === null) {
     return <p>사용자를 찾을 수 없습니다.</p>;
   }
   const isOwner = authUser !== null && authUser.uid === userInfo.uid;
+
   return (
     <ServiceLayout title={`${userInfo.displayName}의 홈`} minH="100vh" backgroundColor="gray.50">
       <Box maxW="md" mx="auto" pt="6">
@@ -116,7 +120,7 @@ const UserHomePage: NextPage<Props> = function () {
               bg="gray.100"
               border="none"
               boxShadow="none !important"
-              placeholder="어떤이야기를 하고 싶나요?"
+              placeholder="어떤이야기를 나누고 싶나요?"
               borderRadius="md"
               resize="none"
               minH="unset"
@@ -202,12 +206,15 @@ const UserHomePage: NextPage<Props> = function () {
         <VStack spacing="12px" mt="6">
           {messageList.map((messageData) => (
             <MessageItem
-              key={`message-item${userInfo.uid}-${messageData.id}`}
+              key={`message-item-${userInfo.uid}-${messageData.id}`}
               item={messageData}
               uid={userInfo.uid}
               displayName={userInfo.displayName ?? ''}
               photoURL={userInfo.photoURL ?? 'https://bit.ly/broken-link'}
               isOwner={isOwner}
+              onSendComplete={() => {
+                setMessageListFetchTrigger((prev) => !prev);
+              }}
             />
           ))}
         </VStack>
@@ -230,6 +237,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
     const host = process.env.HOST || 'localhost';
     const port = process.env.PORT || '3000';
     const baseUrl = `${protocol}://${host}:${port}`;
+    console.log(`${baseUrl}/api/user.info/${screenName}`);
     const userInfoResp: AxiosResponse<InAuthUser> = await axios(`${baseUrl}/api/user.info/${screenName}`);
     return {
       props: {

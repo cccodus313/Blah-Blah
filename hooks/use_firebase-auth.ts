@@ -4,7 +4,7 @@ import { GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 
 export default function useFirebaseAuth() {
-  const [authUser, setAuthUser] = useState<InAuthUser | null>();
+  const [authUser, setAuthUser] = useState<InAuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   const authStateChanged = async (authState: User | null) => {
@@ -15,12 +15,12 @@ export default function useFirebaseAuth() {
       return;
     }
     setLoading(true);
-    // setAuthUser({
-    //   uid: authState.uid,
-    //   email: authState.email,
-    //   photoURL: authState.photoURL,
-    //   displayName: authState.displayName,
-    // });
+    setAuthUser({
+      uid: authState.uid,
+      email: authState.email,
+      photoURL: authState.photoURL,
+      displayName: authState.displayName,
+    });
     setLoading(false);
   };
 
