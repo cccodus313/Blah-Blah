@@ -1,4 +1,4 @@
-import BadReqError from './bad_requst_error';
+import BadReqError from './badrequest_error';
 
 export default function checkSupportMethod(supportMethod: string[], method?: string): void {
   if (supportMethod.indexOf(method!) === -1) {

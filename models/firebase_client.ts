@@ -1,4 +1,4 @@
-import { initializeApp, getApps } from 'firebase/app';
+import { getApps, initializeApp } from 'firebase/app';
 import { Auth, getAuth } from 'firebase/auth';
 import getConfig from 'next/config';
 
@@ -14,33 +14,28 @@ const FirebaseCredentials = {
   apiKey: 'AIzaSyBjE5cst1mdtMzZrjenz-P9wyRjkmzHGk4',
   authDomain: 'blah-blah-288ac.firebaseapp.com',
   projectId: 'blah-blah-288ac',
-  storageBucket: 'blah-blah-288ac.appspot.com',
-  messagingSenderId: '412725580313',
-  appId: '1:412725580313:web:de680f508ca5992eb11088',
 };
 
-export default class FirebaseAuthClient {
-  public static instance: FirebaseAuthClient;
+export default class FirebaseClient {
+  private static instance: FirebaseClient;
 
   private auth: Auth;
 
   public constructor() {
-    // const apps = getApps();
-    // if (apps.length === 0) {
-    console.log('firebase initializeApp');
-    const app = initializeApp(FirebaseCredentials);
-    this.auth = getAuth(app);
-    console.log(this.auth);
-    // }
-
-    console.log('firebase auth client constructor');
+    const apps = getApps();
+    if (apps.length === 0) {
+      console.info('firebase client init start');
+      initializeApp(FirebaseCredentials);
+    }
+    this.auth = getAuth();
+    console.info('firebase auth');
   }
 
-  public static getInstance(): FirebaseAuthClient {
-    if (!FirebaseAuthClient.instance) {
-      FirebaseAuthClient.instance = new FirebaseAuthClient();
+  public static getInstance(): FirebaseClient {
+    if (FirebaseClient.instance === undefined || FirebaseClient.instance === null) {
+      FirebaseClient.instance = new FirebaseClient();
     }
-    return FirebaseAuthClient.instance;
+    return FirebaseClient.instance;
   }
 
   public get Auth(): Auth {

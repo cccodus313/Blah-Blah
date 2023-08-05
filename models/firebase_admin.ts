@@ -1,7 +1,6 @@
 import * as admin from 'firebase-admin';
 
 interface Config {
-  databaseurl: string;
   credential: {
     privateKey: string;
     clientEmail: string;
@@ -13,17 +12,36 @@ export default class FirebaseAdmin {
   public static instance: FirebaseAdmin;
 
   private init = false;
-  Firebase: any;
 
   public static getInstance(): FirebaseAdmin {
-    if (!FirebaseAdmin.instance) {
+    if (FirebaseAdmin.instance === undefined || FirebaseAdmin.instance === null) {
+      // 초기화 진행
       FirebaseAdmin.instance = new FirebaseAdmin();
+      // 환경을 초기화한다.
       FirebaseAdmin.instance.bootstrap();
     }
     return FirebaseAdmin.instance;
   }
 
-  /** firestore */
+  private bootstrap(): void {
+    const haveApp = admin.apps.length !== 0;
+    if (haveApp) {
+      this.init = true;
+      return;
+    }
+
+    const config: Config = {
+      credential: {
+        projectId: process.env.projectId || '',
+        clientEmail: process.env.clientEmail || '',
+        privateKey: (process.env.privateKey || '').replace(/\\n/g, '\n'),
+      },
+    };
+    admin.initializeApp({ credential: admin.credential.cert(config.credential) });
+    console.info('bootstrap firebase admin');
+  }
+
+  /** firestore를 반환 */
   public get Firestore(): FirebaseFirestore.Firestore {
     if (this.init === false) {
       this.bootstrap();
@@ -36,26 +54,5 @@ export default class FirebaseAdmin {
       this.bootstrap();
     }
     return admin.auth();
-  }
-
-  private bootstrap(): void {
-    if (!!admin.apps.length === true) {
-      this.init = true;
-      return;
-    }
-    const config: Config = {
-      databaseurl: process.env.databaseurl || '',
-      credential: {
-        privateKey: (process.env.privateKey || '').replace(/\\n/g, '\n'),
-        clientEmail: process.env.clientEmail || '',
-        projectId: process.env.projectId || '',
-      },
-    };
-
-    admin.initializeApp({
-      databaseURL: config.databaseurl,
-      credential: admin.credential.cert(config.credential),
-    });
-    console.log('bootstrap end');
   }
 }
