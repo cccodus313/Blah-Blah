@@ -1,6 +1,3 @@
-import { ServiceLayout } from '@/components/service_layout';
-import { useAuth } from '@/contexts/auth_user.context';
-import { InAuthUser } from '@/models/in_auth_user';
 import {
   Avatar,
   Box,
@@ -15,10 +12,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { GetServerSideProps, NextPage } from 'next';
-import { useState } from 'react';
 import ResizeTextarea from 'react-textarea-autosize';
+import { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { useQuery } from 'react-query';
+import { ServiceLayout } from '@/components/service_layout';
+import { useAuth } from '@/contexts/auth_user.context';
+import { InAuthUser } from '@/models/in_auth_user';
 import MessageItem from '@/components/message_item';
 import { InMessage } from '@/models/message/in_message';
 
@@ -103,7 +103,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
   useQuery(
     messageListQueryKey,
     async () =>
-      await axios.get<{
+      axios.get<{
         totalElements: number;
         totalPages: number;
         page: number;

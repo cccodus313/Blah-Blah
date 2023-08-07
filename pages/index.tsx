@@ -1,8 +1,8 @@
-import { GoogleLoginButton } from '@/components/google_login_btn';
-import { ServiceLayout } from '@/components/service_layout';
-import { useAuth } from '@/contexts/auth_user.context';
-import { Box, Flex, Heading, Center } from '@chakra-ui/react';
 import { NextPage } from 'next';
+import { Box, Center, Flex, Heading } from '@chakra-ui/react';
+import { ServiceLayout } from '@/components/service_layout';
+import { GoogleLoginButton } from '@/components/google_login_btn';
+import { useAuth } from '@/contexts/auth_user.context';
 
 const IndexPage: NextPage = function () {
   const { signInWithGoogle } = useAuth();

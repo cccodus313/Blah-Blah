@@ -1,23 +1,23 @@
-import convertDateToString from '@/utils/convert_date_to_string';
-import ResizeTextarea from 'react-textarea-autosize';
 import {
   Avatar,
   Box,
+  Button,
   Divider,
   Flex,
-  Text,
-  Textarea,
-  Button,
-  MenuItem,
-  MenuList,
+  IconButton,
   Menu,
   MenuButton,
+  MenuItem,
+  MenuList,
   Spacer,
-  IconButton,
+  Text,
+  Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { InMessage } from '../models/message/in_message';
+import ResizeTextarea from 'react-textarea-autosize';
 import { useState } from 'react';
+import { InMessage } from '@/models/message/in_message';
+import convertDateToString from '@/utils/convert_date_to_string';
 import MoreBtnIcon from './more_btn_icon';
 import FirebaseClient from '@/models/firebase_client';
 
