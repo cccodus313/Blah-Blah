@@ -14,7 +14,6 @@ import {
   MenuButton,
   Spacer,
   IconButton,
-  toast,
   useToast,
 } from '@chakra-ui/react';
 import { InMessage } from '../models/message/in_message';
@@ -25,13 +24,14 @@ import FirebaseClient from '@/models/firebase_client';
 interface Props {
   uid: string;
   displayName: string;
+  screenName: string;
   photoURL: string;
   isOwner: boolean;
   item: InMessage;
   onSendComplete: () => void;
 }
 
-const MessageItem = function ({ uid, photoURL, displayName, isOwner, item, onSendComplete }: Props) {
+const MessageItem = function ({ uid, screenName, photoURL, displayName, isOwner, item, onSendComplete }: Props) {
   const [reply, setReply] = useState('');
   const toast = useToast();
 
@@ -110,10 +110,12 @@ const MessageItem = function ({ uid, photoURL, displayName, isOwner, item, onSen
                   {isDeny ? '비공개 처리 해제' : '비공개 처리'}
                 </MenuItem>
                 <MenuItem
-                // onClick={() => {
-                //   window.location.href = `/${screenName}/${item.id}`;
-                // }}
-                ></MenuItem>
+                  onClick={() => {
+                    window.location.href = `/${screenName}/${item.id}`;
+                  }}
+                >
+                  메세지 상세보기
+                </MenuItem>
               </MenuList>
             </Menu>
           )}
