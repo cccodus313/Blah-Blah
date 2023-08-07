@@ -8,11 +8,11 @@ const IndexPage: NextPage = function () {
   const { signInWithGoogle } = useAuth();
 
   return (
-    <ServiceLayout title="test" minH="100vh" backgroundColor="gray.50">
+    <ServiceLayout title="Blah-Blah" minH="100vh" backgroundColor="gray.50">
       <Box maxW="md" mx="auto" pt="10">
-        <img src="/main_logo.svg" alt="메인로고" />
+        <img src="/people-communicateer.avif" alt="메인로고" />
         <Flex justify="center">
-          <Heading>#Blah-Blah</Heading>
+          <Heading mt="10">#Blah-Blah</Heading>
         </Flex>
       </Box>
       <Center mt="20">

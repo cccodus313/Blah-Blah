@@ -1,14 +1,5 @@
 import { getApps, initializeApp } from 'firebase/app';
 import { Auth, getAuth } from 'firebase/auth';
-import getConfig from 'next/config';
-
-const { publicRuntimeConfig } = getConfig();
-
-// const FirebaseCredentials = {
-//   apiKey: publicRuntimeConfig.apiKey,
-//   authDomain: publicRuntimeConfig.authDomain,
-//   projectId: publicRuntimeConfig.projectId,
-// };
 
 const FirebaseCredentials = {
   apiKey: 'AIzaSyBjE5cst1mdtMzZrjenz-P9wyRjkmzHGk4',
