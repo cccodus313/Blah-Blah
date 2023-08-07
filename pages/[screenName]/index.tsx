@@ -14,11 +14,11 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { TriangleDownIcon } from '@chakra-ui/icons';
 import { GetServerSideProps, NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import ResizeTextarea from 'react-textarea-autosize';
 import axios, { AxiosResponse } from 'axios';
+import { useQuery } from 'react-query';
 import MessageItem from '@/components/message_item';
 import { InMessage } from '@/models/message/in_message';
 
@@ -79,24 +79,6 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
   const toast = useToast();
   const { authUser } = useAuth();
 
-  async function fetchMessageList(uid: string) {
-    try {
-      const resp = await fetch(`/api/messages.list?uid=${uid}&page=${page}$size=10`);
-      if (resp.status === 200) {
-        const data: {
-          totalElements: number;
-          totalPages: number;
-          page: number;
-          size: number;
-          content: InMessage[];
-        } = await resp.json();
-        setTotalPages(data.totalPages);
-        setMessageList((prev) => [...prev, ...data.content]);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
   async function fetchMessageInfo({ uid, messageId }: { uid: string; messageId: string }) {
     try {
       const resp = await fetch(`/api/messages.info?uid=${uid}&messageId=${messageId}`);
@@ -116,15 +98,34 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
       console.error(err);
     }
   }
-  useEffect(() => {
-    if (userInfo === null) return;
-    fetchMessageList(userInfo.uid);
-  }, [userInfo, messageListFetchTrigger, page]);
+  const messageListQueryKey = ['messageList', userInfo?.uid, page, messageListFetchTrigger];
+  useQuery(
+    messageListQueryKey,
+    async () =>
+      await axios.get<{
+        totalElements: number;
+        totalPages: number;
+        page: number;
+        size: number;
+        content: InMessage[];
+      }>(`/api/messages.list?uid=${userInfo?.uid}&page=${page}&size=10`),
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+      onSuccess: (data) => {
+        setTotalPages(data.data.totalPages);
+        if (page === 1) {
+          setMessageList([...data.data.content]);
+          return;
+        }
+        setMessageList((prev) => [...prev, ...data.data.content]);
+      },
+    },
+  );
   if (userInfo === null) {
     return <p>사용자를 찾을 수 없습니다.</p>;
   }
   const isOwner = authUser !== null && authUser.uid === userInfo.uid;
-
   return (
     <ServiceLayout title={`${userInfo.displayName}의 홈`} minH="100vh" backgroundColor="gray.50">
       <Box maxW="md" mx="auto" pt="6">
@@ -203,6 +204,10 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
                   toast({ title: '등록실패', position: 'top-right' });
                 }
                 setMessage('');
+                setPage(1);
+                setTimeout(() => {
+                  setMessageListFetchTrigger((prev) => !prev);
+                }, 50);
               }}
             >
               등록
@@ -251,7 +256,6 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
             width="full"
             mt="2"
             fontSize="sm"
-            leftIcon={<TriangleDownIcon />}
             onClick={() => {
               setPage((p) => p + 1);
             }}
