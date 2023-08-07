@@ -103,7 +103,8 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
   useQuery(
     messageListQueryKey,
     async () =>
-      axios.get<{
+      // eslint-disable-next-line no-return-await
+      await axios.get<{
         totalElements: number;
         totalPages: number;
         page: number;
@@ -286,7 +287,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
     const host = process.env.HOST || 'localhost';
     const port = process.env.PORT || '3000';
     const baseUrl = `${protocol}://${host}:${port}`;
-    console.log(`${baseUrl}/api/user.info/${screenName}`);
     const userInfoResp: AxiosResponse<InAuthUser> = await axios(`${baseUrl}/api/user.info/${screenName}`);
     return {
       props: {
