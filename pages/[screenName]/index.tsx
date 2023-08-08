@@ -279,6 +279,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
     const host = process.env.HOST || 'localhost';
     const port = process.env.PORT || '3000';
     const baseUrl = `${protocol}://${host}:${port}`;
+    console.log(baseUrl);
     const userInfoResp: AxiosResponse<InAuthUser> = await axios(`${baseUrl}/api/user.info/${screenName}`);
     return {
       props: {
