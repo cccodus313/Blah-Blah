@@ -275,10 +275,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   }
   const screenNameToStr = Array.isArray(screenName) ? screenName[0] : screenName;
   try {
-    const protocol = process.env.PROTOCOL || 'http';
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const host = process.env.HOST || 'localhost';
     const port = process.env.PORT || '3000';
-    const baseUrl = `${protocol}://${host}:${port}`;
+
+    const baseUrl = `${protocol}://${host}${process.env.NODE_ENV === 'development' ? `:${port}` : ''}`;
     console.log(baseUrl);
     const userInfoResp: AxiosResponse<InAuthUser> = await axios(`${baseUrl}/api/user.info/${screenName}`);
     return {
