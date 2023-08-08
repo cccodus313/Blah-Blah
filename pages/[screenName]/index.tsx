@@ -11,6 +11,7 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
+import { TriangleDownIcon } from '@chakra-ui/icons';
 import { GetServerSideProps, NextPage } from 'next';
 import ResizeTextarea from 'react-textarea-autosize';
 import { useState } from 'react';
@@ -28,12 +29,12 @@ interface Props {
 }
 
 async function postMessage({
-  message,
   uid,
+  message,
   author,
 }: {
-  message: string;
   uid: string;
+  message: string;
   author?: {
     displayName: string;
     photoURL?: string;
@@ -42,7 +43,7 @@ async function postMessage({
   if (message.length <= 0) {
     return {
       result: false,
-      message: '내용을 입력해주세요',
+      message: '메시지를 입력해주세요',
     };
   }
   try {
@@ -64,7 +65,7 @@ async function postMessage({
     console.error(err);
     return {
       result: false,
-      message: '등록 실패',
+      message: '메시지 등록 실패',
     };
   }
 }
@@ -76,10 +77,8 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
   const [totalPages, setTotalPages] = useState(1);
   const [messageList, setMessageList] = useState<InMessage[]>([]);
   const [messageListFetchTrigger, setMessageListFetchTrigger] = useState(false);
-
   const toast = useToast();
   const { authUser } = useAuth();
-
   async function fetchMessageInfo({ uid, messageId }: { uid: string; messageId: string }) {
     try {
       const resp = await fetch(`/api/messages.info?uid=${uid}&messageId=${messageId}`);
@@ -150,21 +149,18 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
             <Textarea
               bg="gray.100"
               border="none"
-              boxShadow="none !important"
-              placeholder="어떤이야기를 나누고 싶나요?"
-              borderRadius="md"
+              placeholder="무엇이 궁금한가요?"
               resize="none"
               minH="unset"
               overflow="hidden"
               fontSize="xs"
               mr="2"
-              minRows={1}
               maxRows={7}
               as={ResizeTextarea}
               value={message}
               onChange={(e) => {
-                if (e.target.value) {
-                  const lineCount = (e.target.value.match(/[^\n]*\n[^\n]*/gi)?.length ?? 1) + 1;
+                if (e.currentTarget.value) {
+                  const lineCount = (e.currentTarget.value.match(/[^\n]*\n[^\n]*/gi)?.length ?? 1) + 1;
                   if (lineCount > 7) {
                     toast({
                       title: '최대 7줄까지만 입력가능합니다',
@@ -173,7 +169,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
                     return;
                   }
                 }
-                setMessage(e.target.value);
+                setMessage(e.currentTarget.value);
               }}
             />
             <Button
@@ -203,7 +199,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
                 }
                 const messageResp = await postMessage(postData);
                 if (messageResp.result === false) {
-                  toast({ title: '등록실패', position: 'top-right' });
+                  toast({ title: '메시지 등록 실패', position: 'top-right' });
                 }
                 setMessage('');
                 setPage(1);
@@ -224,10 +220,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
               isChecked={isAnonymous}
               onChange={() => {
                 if (authUser === null) {
-                  toast({
-                    title: '로그인이 필요합니다',
-                    position: 'top-right',
-                  });
+                  toast({ title: '로그인이 필요합니다', position: 'top-right' });
                   return;
                 }
                 setAnonymous((prev) => !prev);
@@ -259,6 +252,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
             width="full"
             mt="2"
             fontSize="sm"
+            leftIcon={<TriangleDownIcon />}
             onClick={() => {
               setPage((p) => p + 1);
             }}
