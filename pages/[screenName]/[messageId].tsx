@@ -3,6 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Link from 'next/link';
+import { ChevronLeftIcon } from '@chakra-ui/icons';
 import Head from 'next/head';
 import { ServiceLayout } from '@/components/service_layout';
 import { useAuth } from '@/contexts/auth_user.context';
@@ -45,7 +46,7 @@ const MessagePage: NextPage<Props> = function ({ userInfo, messageData: initMsgD
       <Head>
         <meta property="og:image" content={thumbnailImgUrl} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@blah-blah" />
+        <meta name="twitter:site" content="@blahx2" />
         <meta name="twitter:title" content={messageData.message} />
         <meta name="twitter:image" content={thumbnailImgUrl} />
       </Head>
@@ -53,7 +54,7 @@ const MessagePage: NextPage<Props> = function ({ userInfo, messageData: initMsgD
         <Box maxW="md" mx="auto" pt="6">
           <Link href={`/${screenName}`}>
             <a>
-              <Button mb="2" fontSize="sm">
+              <Button leftIcon={<ChevronLeftIcon />} mb="2" fontSize="sm">
                 {screenName} 홈으로
               </Button>
             </a>
@@ -70,8 +71,8 @@ const MessagePage: NextPage<Props> = function ({ userInfo, messageData: initMsgD
           <MessageItem
             item={messageData}
             uid={userInfo.uid}
-            screenName={screenName}
             displayName={userInfo.displayName ?? ''}
+            screenName={screenName}
             photoURL={userInfo.photoURL ?? 'https://bit.ly/broken-link'}
             isOwner={isOwner}
             onSendComplete={() => {
