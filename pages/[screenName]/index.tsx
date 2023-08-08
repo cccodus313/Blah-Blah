@@ -11,7 +11,6 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { TriangleDownIcon } from '@chakra-ui/icons';
 import { GetServerSideProps, NextPage } from 'next';
 import ResizeTextarea from 'react-textarea-autosize';
 import { useState } from 'react';
@@ -252,7 +251,6 @@ const UserHomePage: NextPage<Props> = function ({ userInfo, screenName }) {
             width="full"
             mt="2"
             fontSize="sm"
-            leftIcon={<TriangleDownIcon />}
             onClick={() => {
               setPage((p) => p + 1);
             }}

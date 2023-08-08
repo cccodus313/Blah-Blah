@@ -3,7 +3,6 @@ import { GetServerSideProps, NextPage } from 'next';
 import { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Link from 'next/link';
-import { ChevronLeftIcon } from '@chakra-ui/icons';
 import Head from 'next/head';
 import { ServiceLayout } from '@/components/service_layout';
 import { useAuth } from '@/contexts/auth_user.context';
@@ -54,7 +53,7 @@ const MessagePage: NextPage<Props> = function ({ userInfo, messageData: initMsgD
         <Box maxW="md" mx="auto" pt="6">
           <Link href={`/${screenName}`}>
             <a>
-              <Button leftIcon={<ChevronLeftIcon />} mb="2" fontSize="sm">
+              <Button mb="2" fontSize="sm">
                 {screenName} 홈으로
               </Button>
             </a>
